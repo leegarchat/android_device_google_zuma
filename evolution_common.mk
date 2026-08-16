@@ -1,0 +1,3 @@
+
+# UDFPS
+TARGET_HAS_UDFPS += true
