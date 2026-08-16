@@ -11,6 +11,25 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/developer_gsi_keys.mk)
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.ipsec_tunnel_migration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.ipsec_tunnel_migration.xml
 
+# PixelParts
+# include packages/apps/PixelParts/device.mk
+
+# Build signing keys
+PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/pixelparts-keys/releasekey
+PRODUCT_OTA_PUBLIC_KEYS := vendor/pixelparts-keys/releasekey
+PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES := vendor/pixelparts-keys
+PRODUCT_MAINLINE_BLUETOOTH_SEPOLICY_DEV_CERTIFICATES := vendor/pixelparts-keys
+
+# Maintainer overlays
+PRODUCT_PACKAGES += \
+    UpdaterOverlayLeeGar \
+    SettingsOverlayLeeGar
+
+# Device artifact allowlist
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/etc/permissions/privapp_allowlist_com.google.android.ext.services.xml
+
+
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey
@@ -378,6 +397,21 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.carrierlock.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.carrierlock.xml
 
+# DeviceAsWebcam
+TARGET_BUILD_DEVICE_AS_WEBCAM := true
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/lib64/libjni_deviceAsWebcam.so \
+    system/priv-app/DeviceAsWebcam/DeviceAsWebcam.apk \
+    system/priv-app/DeviceAsWebcam/lib/arm64/libjni_deviceAsWebcam.so
+
+
+# JamesDSP
+$(call inherit-product-if-exists, vendor/JamesDSP/config.mk)
+
+# Google Face Unlock
+$(call inherit-product-if-exists, vendor/google/faceunlock/config.mk)
+
+
 # Touch
 include hardware/google/pixel/touch/device.mk
 
@@ -391,3 +425,6 @@ DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE += \
 
 # ZRAM writeback
 include hardware/google/pixel/mm/device_gki.mk
+
+# PixelExtraParts
+$(call inherit-product-if-exists, vendor/google/faceunlock/config.mk)
