@@ -4,6 +4,6 @@
 //
 
 runtime_resource_overlay {
-    name: "PixelConfigOverlay2019",
+    name: "PixelConfigOverlay2019Zuma",
     product_specific: true,
 }
