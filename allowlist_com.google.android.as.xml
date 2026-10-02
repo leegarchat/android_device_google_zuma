@@ -20,4 +20,6 @@
     <allow-association target="com.google.android.as.oss" allowed="com.google.android.as" />
     <!-- AI services open-source network component can bind to AI Core. -->
     <allow-association target="com.google.android.as.oss" allowed="com.google.android.aicore" />
+    <!-- AI services open-source network component can bind to Now Playing. -->
+    <allow-association target="com.google.android.as.oss" allowed="com.google.android.apps.pixel.nowplaying" />
 </config>

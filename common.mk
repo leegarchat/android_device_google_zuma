@@ -38,6 +38,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     misc_writer
 
+# Thermal
+PRODUCT_PACKAGES += \
+    android.hardware.thermal-service.pixel \
+    thermal_symlinks
+
 TARGET_BOARD_PLATFORM := zuma
 
 AB_OTA_POSTINSTALL_CONFIG += \
@@ -50,6 +55,7 @@ PRODUCT_SOONG_NAMESPACES += \
 	hardware/google/av \
 	hardware/google/interfaces \
 	hardware/google/pixel \
+	hardware/google/pixel/thermal \
 	device/google/zuma
 
 # Set the environment variable to switch the Keymint HAL service to Rust
@@ -409,6 +415,13 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/priv-app/DeviceAsWebcam/DeviceAsWebcam.apk \
     system/priv-app/DeviceAsWebcam/lib/arm64/libjni_deviceAsWebcam.so
 
+# AppDataBackup + TFLite GPU (Settings dependency)
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/etc/permissions/privapp-permissions-appbackup.xml \
+    system/lib64/libtensorflowlite_gpu_jni.so \
+    system/priv-app/AppDataBackup/AppDataBackup.apk \
+    system/apex/com.google.android.webapp.apex
+
 
 # JamesDSP
 $(call inherit-product-if-exists, vendor/JamesDSP/config.mk)
@@ -432,4 +445,7 @@ DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE += \
 include hardware/google/pixel/mm/device_gki.mk
 
 # PixelExtraParts
-$(call inherit-product-if-exists, vendor/google/faceunlock/config.mk)
+$(call inherit-product-if-exists, packages/apps/PixelExtraParts/device.mk)
+
+# SukiSU manager one-shot installer (self-gated on ksu kernels inside).
+include device/google/zuma/sukisu/sukisu.mk
