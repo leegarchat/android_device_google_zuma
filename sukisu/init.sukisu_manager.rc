@@ -1,0 +1,24 @@
+# SukiSU manager one-shot installer.
+#
+# The manager APK is shipped as an INERT file under /system/etc/sukisu
+# (not scanned as an app: only app//priv-app dirs are scanned), and this
+# oneshot service installs it exactly once via PackageManager after every
+# boot that reaches boot_completed (first boot after setup, first boot
+# after an OTA, ...). The script itself guards with a versioned flag file
+# in /data/local/tmp/sukisu, so repeats are no-ops.
+#
+# No seclabel on purpose: init executes /system/bin/sh and the stock
+# domain_trans(init, shell_exec, shell) policy moves the script into the
+# shell domain — the exact context `adb install`/`pm install` runs in.
+# (An explicit seclabel would need an init->domain transition rule that
+# stock policy does not provide; running in init context cannot exec
+# app_process at all.)
+service sukisu_manager_install /system/bin/sh /system/etc/sukisu/install_manager.sh
+    user root
+    group root
+    disabled
+    oneshot
+    stdio_to_kmsg
+
+on property:sys.boot_completed=1
+    start sukisu_manager_install
