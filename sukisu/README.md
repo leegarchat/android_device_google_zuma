@@ -33,18 +33,25 @@ include `common.mk` after `TARGET_KERNEL_DIR` is resolved).
    at all — `zygote_exec` has no init transition. Verified against
    `system/sepolicy/private/init.te`, `te_macros`, `service.cpp`.)
 3. The script (`pm install -r`, staged via `/data/local/tmp` like `adb
-   install` does) installs the manager silently, then writes the versioned
-   flag `/data/local/tmp/sukisu/manager_<vercode>.installed`.
-4. Flag present → no-op. Package present but no flag (user side-loaded,
-   backup restore) → record flag, don't touch. Install failed → no flag,
-   retry next boot. User uninstall after install → flag stays → respected,
+   install` does) installs or updates the manager silently, then records
+   the vercode in `Settings.Global sukisu_manager_handled_vercode`.
+4. Key == VER → no-op. Installed versionCode == VER (side-load, backup
+   restore) → just record key. Installed newer than bundled → keep it, no
+   downgrade, record key. Installed older/missing → `pm install -r`
+   (update or fresh install). Install failed → key untouched, retry next
+   boot. User uninstall after handling → key stays == VER → respected,
    no reinstall.
 
 ## Bumping the manager
 
 Replace the APK, keeping the `<label>_<vercode>.apk` naming (the script
-parses vercode from the filename and versions the flag with it, so a newer
-build reinstalls exactly once). Nothing else to edit.
+parses vercode from the filename and compares it against both the
+Settings key and the installed versionCode, so a newer build updates
+exactly once). Nothing else to edit. No manual migration: devices that
+still carry the old `/data/local/tmp/sukisu/manager_*.installed` file-flag
+are handled naturally — first run with the new script sees key != VER and
+reconciles from the real package state (same version → record key, older →
+update, newer → keep).
 
 ## SELinux: why sukisu_install.te exists
 
@@ -60,7 +67,7 @@ the `.rc`, fires the trigger at `boot_completed`, then aborts (dmesg):
 
 `../sepolicy/vendor/sukisu_install.te` re-applies exactly that stock
 expansion (no neverallow covers it). Without it the service can never
-start: no install, no flag file, no error in logcat (only the dmesg line).
+start: no install, no Settings key, no error in logcat (only the dmesg line).
 
 If a future base-policy update restores the stock rule, the build fails
 loudly with a duplicate `type_transition` error — that means the `.te`
@@ -69,7 +76,7 @@ file is obsolete and can be deleted.
 ## Verification (after flashing a ksu build)
 
 - `ls /system/etc/sukisu/` — APK + script present; stock-kernel build: absent.
-- `ls /data/local/tmp/sukisu/` — `manager_35171.installed` after first boot.
+- `settings get global sukisu_manager_handled_vercode` — `35171` after first boot.
 - `pm list packages com.resukisu.resukisu` — present, and it is a user app
   (`dumpsys package com.resukisu.resukisu | grep -i system` → empty / `codePath`
   under `/data/app`).
