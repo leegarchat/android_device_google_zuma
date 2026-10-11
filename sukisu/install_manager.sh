@@ -1,26 +1,27 @@
 #!/system/bin/sh
 # SukiSU manager one-shot installer (user app, NOT a system app).
 #
-# Runs once per boot as an init oneshot service (root uid, shell SELinux
-# domain via the stock init->shell transition) triggered on
-# sys.boot_completed=1. Installs the bundled manager APK via PackageManager
-# (silent, same path as `adb install`) and records a versioned flag file so
-# it never reinstalls (e.g. after the user uninstalls it on purpose).
+# Runs as an init oneshot service (root uid, shell SELinux domain via the
+# stock init->shell transition) triggered on sys.boot_completed=1.
+# Installs the bundled manager APK via PackageManager (silent, same path as
+# `adb install`). State is a single Settings.Global key holding the last
+# HANDLED vercode, so repeats are no-ops and a deliberate user uninstall
+# is respected (key stays == VER, script exits).
 #
 # Layout on device (read-only, from the build):
 #   /system/etc/sukisu/*.apk   — exactly ONE manager APK, named <label>_<vercode>.apk
-# Writable state:
-#   /data/local/tmp/sukisu/manager_<vercode>.installed — flag file
-#   /data/local/tmp/sukisu_manager_install.apk         — staging copy for pm
+# State:
+#   Settings.Global sukisu_manager_handled_vercode — last handled vercode
+#   /data/local/tmp/sukisu_manager_install.apk     — staging copy for pm
 #
 # Exit 0 = nothing to do (or done); exit 1 = install failed, retry next boot
-# (no flag is written, so the next boot_completed trigger retries).
+# (key is left untouched, so the next boot_completed trigger retries).
 
 TAG="sukisu-install"
 PKG="com.resukisu.resukisu"
+KEY="sukisu_manager_handled_vercode"
 APK_DIR="/system/etc/sukisu"
 STAGE="/data/local/tmp/sukisu_manager_install.apk"
-FLAG_DIR="/data/local/tmp/sukisu"
 
 log() {
     echo "$TAG: $*"
@@ -30,9 +31,21 @@ is_installed() {
     pm list packages "$PKG" 2>/dev/null | grep -qx "package:$PKG"
 }
 
+installed_ver() {
+    dumpsys package "$PKG" 2>/dev/null | grep -m1 'versionCode=' | sed 's/.*versionCode=\([0-9][0-9]*\).*/\1/'
+}
+
+mark_handled() {
+    if settings put global "$KEY" "$VER" 2>/dev/null; then
+        return 0
+    fi
+    log "failed to record $KEY=$VER, will retry next boot"
+    return 1
+}
+
 # Exactly one bundled APK, named <anything>_<vercode>.apk
-# (e.g. SukiSU_35171.apk). The vercode versions the flag file, so shipping
-# a newer manager later reinstalls exactly once.
+# (e.g. SukiSU_35171.apk). The vercode is compared against both the
+# Settings key and the installed package versionCode.
 APK=""
 VER=""
 for f in "$APK_DIR"/*.apk; do
@@ -56,23 +69,43 @@ case "$VER" in
         exit 1
         ;;
 esac
-FLAG="$FLAG_DIR/manager_${VER}.installed"
 
-if [ -f "$FLAG" ]; then
-    log "already handled (flag $FLAG present), nothing to do"
+HANDLED="$(settings get global "$KEY" 2>/dev/null)"
+case "$HANDLED" in
+    null|"") HANDLED="" ;;
+esac
+
+if [ "$HANDLED" = "$VER" ]; then
+    log "already handled (global $KEY=$VER), nothing to do"
     exit 0
 fi
 
-# Manager already present (side-loaded newer build, restored backup, ...):
-# respect it, just record the flag so we never fight the user.
-if is_installed; then
-    log "package $PKG already present, recording flag"
-    mkdir -p "$FLAG_DIR" && echo "$PKG $VER" > "$FLAG"
-    exit 0
+INST_VER="$(installed_ver)"
+case "$INST_VER" in
+    ''|*[!0-9]*) INST_VER="" ;;
+esac
+
+# Same version already on device (side-load, backup restore, ...):
+# just record it, don't reinstall.
+if [ -n "$INST_VER" ] && [ "$INST_VER" = "$VER" ]; then
+    log "package $PKG $VER already present, recording"
+    mark_handled
+    exit $?
 fi
 
-log "installing $PKG from $APK (vercode $VER)"
-mkdir -p "$FLAG_DIR" || exit 1
+# Newer version already on device: never downgrade, just record.
+if [ -n "$INST_VER" ] && [ "$INST_VER" -gt "$VER" ] 2>/dev/null; then
+    log "package $PKG $INST_VER newer than bundled $VER, keeping it"
+    mark_handled
+    exit $?
+fi
+
+if [ -n "$INST_VER" ]; then
+    log "updating $PKG $INST_VER -> $VER from $APK"
+else
+    log "installing $PKG from $APK (vercode $VER)"
+fi
+
 cp "$APK" "$STAGE" 2>/dev/null || {
     log "staging copy failed"
     exit 1
@@ -81,9 +114,9 @@ cp "$APK" "$STAGE" 2>/dev/null || {
 if pm install -r "$STAGE" 2>&1; then
     rm -f "$STAGE"
     if is_installed; then
-        echo "$PKG $VER" > "$FLAG"
-        log "install OK, flag written"
-        exit 0
+        log "install OK"
+        mark_handled
+        exit $?
     fi
     log "pm reported success but package missing afterwards"
 else

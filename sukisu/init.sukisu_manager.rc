@@ -4,8 +4,8 @@
 # (not scanned as an app: only app//priv-app dirs are scanned), and this
 # oneshot service installs it exactly once via PackageManager after every
 # boot that reaches boot_completed (first boot after setup, first boot
-# after an OTA, ...). The script itself guards with a versioned flag file
-# in /data/local/tmp/sukisu, so repeats are no-ops.
+# after an OTA, ...). The script itself guards with a Settings.Global key
+# holding the last handled vercode, so repeats are no-ops.
 #
 # No seclabel on purpose: init executes /system/bin/sh and the stock
 # domain_trans(init, shell_exec, shell) policy moves the script into the
