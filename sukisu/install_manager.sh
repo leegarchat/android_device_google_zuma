@@ -17,7 +17,7 @@
 # (no flag is written, so the next boot_completed trigger retries).
 
 TAG="sukisu-install"
-PKG="com.sukisu.ultra"
+PKG="com.resukisu.resukisu"
 APK_DIR="/system/etc/sukisu"
 STAGE="/data/local/tmp/sukisu_manager_install.apk"
 FLAG_DIR="/data/local/tmp/sukisu"
@@ -31,7 +31,7 @@ is_installed() {
 }
 
 # Exactly one bundled APK, named <anything>_<vercode>.apk
-# (e.g. SukiSU_40900.apk). The vercode versions the flag file, so shipping
+# (e.g. SukiSU_35171.apk). The vercode versions the flag file, so shipping
 # a newer manager later reinstalls exactly once.
 APK=""
 VER=""

@@ -1,6 +1,7 @@
 # SukiSU manager one-shot installer (zuma family)
 
-Installs the SukiSU manager (`com.sukisu.ultra`) exactly once as a regular
+Installs the reSukiSU manager (`com.resukisu.resukisu`, vercode 35171,
+v4.2.0-rc3) exactly once as a regular
 **user app** — never as a system app — on akita / husky / shiba, but only
 for custom kernels whose prebuilt directory name contains `ksu`
 (e.g. `shiba_cp2a_005_wksu_avgust`). Stock kernels get nothing.
@@ -9,7 +10,7 @@ for custom kernels whose prebuilt directory name contains `ksu`
 
 | File | Installed to | Purpose |
 |---|---|---|
-| `SukiSU_40900.apk` | `/system/etc/sukisu/` | Inert manager copy. Not scanned as an app (only `app/`/`priv-app/` are scanned) |
+| `SukiSU_35171.apk` | `/system/etc/sukisu/` | Inert manager copy. Not scanned as an app (only `app/`/`priv-app/` are scanned) |
 | `install_manager.sh` | `/system/etc/sukisu/` | Installer script, run by init |
 | `init.sukisu_manager.rc` | `/vendor/etc/init/` | Oneshot service + `boot_completed` trigger (auto-imported) |
 | `sukisu.mk` | (build only) | `PRODUCT_COPY_FILES`, self-gated on ksu kernel |
@@ -68,9 +69,11 @@ file is obsolete and can be deleted.
 ## Verification (after flashing a ksu build)
 
 - `ls /system/etc/sukisu/` — APK + script present; stock-kernel build: absent.
-- `ls /data/local/tmp/sukisu/` — `manager_40900.installed` after first boot.
-- `pm list packages com.sukisu.ultra` — present, and it is a user app
-  (`dumpsys package com.sukisu.ultra | grep -i system` → empty / `codePath`
+- `ls /data/local/tmp/sukisu/` — `manager_35171.installed` after first boot.
+- `pm list packages com.resukisu.resukisu` — present, and it is a user app
+  (`dumpsys package com.resukisu.resukisu | grep -i system` → empty / `codePath`
   under `/data/app`).
 - `logcat -s` / `dmesg | grep sukisu-install` — `install OK` on first boot,
   `already handled` afterwards.
+- Note: supersedes the old `com.sukisu.ultra` (vercode 40900) build — the old
+  manager is NOT auto-uninstalled, remove it manually if both end up installed.
