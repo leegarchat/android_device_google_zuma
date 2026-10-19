@@ -80,7 +80,8 @@ file is obsolete and can be deleted.
 - `pm list packages com.resukisu.resukisu` — present, and it is a user app
   (`dumpsys package com.resukisu.resukisu | grep -i system` → empty / `codePath`
   under `/data/app`).
-- `logcat -s` / `dmesg | grep sukisu-install` — `install OK` on first boot,
-  `already handled` afterwards.
+- `logcat -s sukisu-install` — `install OK` on first boot,
+  `already handled` afterwards (script mirrors every line to logcat;
+  `stdio_to_kmsg` alone is only readable with root).
 - Note: supersedes the old `com.sukisu.ultra` (vercode 40900) build — the old
   manager is NOT auto-uninstalled, remove it manually if both end up installed.
