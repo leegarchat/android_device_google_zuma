@@ -27,7 +27,7 @@ log() {
     echo "$TAG: $*"
     # Mirror to logcat: stdio_to_kmsg goes only to the kernel buffer
     # (unreadable without root), this line is visible via `logcat -s`.
-    log -p i -t "$TAG" "$*" 2>/dev/null
+    command -p /system/bin/log -p i -t "$TAG" "$*" 2>/dev/null || true
 }
 
 is_installed() {
