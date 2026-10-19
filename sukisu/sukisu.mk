@@ -30,7 +30,7 @@ ifneq ($(findstring ksu,$(_SUKISU_KERNEL_LC)),)
 # during 'pre product config' phase.
 
 PRODUCT_COPY_FILES += \
-    device/google/zuma/sukisu/ReSukiSU_35061.apk:$(TARGET_COPY_OUT_SYSTEM)/etc/sukisu/ReSukiSU_35061.apk \
+    device/google/zuma/sukisu/SukiSU_35171.apk:$(TARGET_COPY_OUT_SYSTEM)/etc/sukisu/SukiSU_35171.apk \
     device/google/zuma/sukisu/install_manager.sh:$(TARGET_COPY_OUT_SYSTEM)/etc/sukisu/install_manager.sh \
     device/google/zuma/sukisu/init.sukisu_manager.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.sukisu_manager.rc
 
