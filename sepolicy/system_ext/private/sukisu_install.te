@@ -1,0 +1,14 @@
+# SukiSU manager installer: init -> shell transition.
+#
+# Lives here (system_ext platform policy) and NOT in sepolicy/vendor on
+# purpose: a rule purely between core types
+#   domain_trans(init, shell_exec, shell)
+# placed in vendor policy compiles PARTIALLY — the four allow rules land in
+# vendor_sepolicy.cil but the type_transition is silently dropped (vendor
+# policy may not create core-only transitions). Verified on-device: the
+# oneshot service then aborts at every boot with
+#   Could not ctl.start ... no domain transition from u:r:init:s0 ...
+# and the manager is never installed, with zero logcat footprint.
+# In platform policy the same macro expands fully (verified: the merged
+# policy contains the typetransition).
+domain_trans(init, shell_exec, shell)
