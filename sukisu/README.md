@@ -1,6 +1,6 @@
 # SukiSU manager one-shot installer (zuma family)
 
-Installs the reSukiSU manager (`com.resukisu.resukisu`, vercode 35171,
+Installs the reSukiSU manager (`com.resukisu.resukisu`, vercode 35061,
 v4.2.0-rc3) exactly once as a regular
 **user app** — never as a system app — on akita / husky / shiba, but only
 for custom kernels whose prebuilt directory name contains `ksu`
@@ -10,7 +10,7 @@ for custom kernels whose prebuilt directory name contains `ksu`
 
 | File | Installed to | Purpose |
 |---|---|---|
-| `SukiSU_35171.apk` | `/system/etc/sukisu/` | Inert manager copy. Not scanned as an app (only `app/`/`priv-app/` are scanned) |
+| `ReSukiSU_35061.apk` | `/system/etc/sukisu/` | Inert manager copy. Not scanned as an app (only `app/`/`priv-app/` are scanned) |
 | `install_manager.sh` | `/system/etc/sukisu/` | Installer script, run by init |
 | `init.sukisu_manager.rc` | `/vendor/etc/init/` | Oneshot service + `boot_completed` trigger (auto-imported) |
 | `sukisu.mk` | (build only) | `PRODUCT_COPY_FILES`, self-gated on ksu kernel |
@@ -67,7 +67,7 @@ KSU kernels only (see `sukisu.mk` gate); stock kernels get no files.
 ## Verification (after flashing a ksu build)
 
 - `ls /system/etc/sukisu/` — APK + script present; stock-kernel build: absent.
-- `settings get global sukisu_manager_handled_vercode` — `35171` after first boot.
+- `settings get global sukisu_manager_handled_vercode` — `35061` after first boot.
 - `pm list packages com.resukisu.resukisu` — present, and it is a user app
   (`dumpsys package com.resukisu.resukisu | grep -i system` → empty / `codePath`
   under `/data/app`).
