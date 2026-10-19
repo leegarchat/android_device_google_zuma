@@ -22,3 +22,6 @@ service sukisu_manager_install /system/bin/sh /system/etc/sukisu/install_manager
 
 on property:sys.boot_completed=1
     start sukisu_manager_install
+
+on property:dev.bootcomplete=1
+    start sukisu_manager_install

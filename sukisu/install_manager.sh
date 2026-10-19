@@ -25,6 +25,9 @@ STAGE="/data/local/tmp/sukisu_manager_install.apk"
 
 log() {
     echo "$TAG: $*"
+    # Mirror to logcat: stdio_to_kmsg goes only to the kernel buffer
+    # (unreadable without root), this line is visible via `logcat -s`.
+    log -p i -t "$TAG" "$*" 2>/dev/null
 }
 
 is_installed() {
