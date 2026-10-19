@@ -1,25 +1,9 @@
-# SukiSU manager installer: init -> shell transition.
+# SukiSU manager installer (vendor fragment).
 #
-# The oneshot service in ../../sukisu/init.sukisu_manager.rc runs
-# `/system/bin/sh /system/etc/sukisu/install_manager.sh` with NO seclabel,
-# so init must transition to the shell domain on exec. The stock rule
-#   domain_trans(init, shell_exec, shell)
-# from system/sepolicy/private/init.te does NOT take effect in this build:
-# on a clean flash + reboot, init parses the .rc and fires
-# `start sukisu_manager_install` at sys.boot_completed=1, then aborts with
-# (dmesg):
-#   Could not start service: File /system/bin/sh (labeled
-#   "u:object_r:shell_exec:s0") has incorrect label or no domain transition
-#   from u:r:init:s0 to another SELinux domain defined.
-# (security_compute_create() found no type_transition for
-# init + shell_exec -> *, so the service can never start and the manager
-# is never installed; no flag file appears in /data/local/tmp/sukisu.)
-#
-# Re-apply the stock expansion here. Vendor policy is allowed to extend
-# core domains, and no neverallow covers these rules (checked against
-# system/sepolicy/{private,public}/*.te).
-#
-# NOTE: if a future base-policy update restores the stock rule, the build
-# will fail loudly with a duplicate type_transition error. That failure
-# means this file is obsolete: just delete it.
-domain_trans(init, shell_exec, shell)
+# Intentionally EMPTY of rules: the only rule this installer needs,
+#   domain_trans(init, shell_exec, shell),
+# is purely between core types and MUST live in
+# ../system_ext/private/sukisu_install.te. Placed here it compiles
+# partially (allows without the typetransition) and the oneshot service
+# can never start — see that file for the on-device proof.
+# This file remains as a pointer so nobody re-adds the rule here.

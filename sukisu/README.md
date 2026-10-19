@@ -53,25 +53,28 @@ are handled naturally — first run with the new script sees key != VER and
 reconciles from the real package state (same version → record key, older →
 update, newer → keep).
 
-## SELinux: why sukisu_install.te exists
+## SELinux: why the transition lives in system_ext/private
 
-The service runs `/system/bin/sh` with no `seclabel`, so init needs a
-`init -> shell` domain transition on exec. The stock
-`domain_trans(init, shell_exec, shell)` (system/sepolicy) has no effect in
-this build — proven on-device: after a clean flash + reboot, init parses
-the `.rc`, fires the trigger at `boot_completed`, then aborts (dmesg):
+The service runs `/system/bin/sh` with NO seclabel, so init needs an
+`init -> shell` domain transition on exec of `shell_exec`. Facts
+established on-device (Pixel 8, Oct 2026 image, root via manager):
 
-> Could not start service: File /system/bin/sh (labeled
-> "u:object_r:shell_exec:s0") has incorrect label or no domain transition
-> from u:r:init:s0 ...
-
-`../sepolicy/vendor/sukisu_install.te` re-applies exactly that stock
-expansion (no neverallow covers it). Without it the service can never
-start: no install, no Settings key, no error in logcat (only the dmesg line).
-
-If a future base-policy update restores the stock rule, the build fails
-loudly with a duplicate `type_transition` error — that means the `.te`
-file is obsolete and can be deleted.
+- The merged policy contains `(typetransition adbd shell_exec process
+  shell)` but NO `(typetransition init shell_exec process shell)` —
+  checked in both `plat_sepolicy.cil` and `vendor_sepolicy.cil` pulled
+  from the device. Manual `start sukisu_manager_install` aborts with
+  `Could not ctl.start ... no domain transition from u:r:init:s0`.
+- A `domain_trans(init, shell_exec, shell)` placed in
+  `sepolicy/vendor/sukisu_install.te` compiles PARTIALLY: the four allow
+  rules land in `vendor_sepolicy.cil`, the `typetransition` is silently
+  dropped (vendor policy cannot mint core-only transitions). The service
+  then fails at every boot with zero logcat footprint.
+- Therefore the rule lives in
+  `../system_ext/private/sukisu_install.te` (platform policy, where
+  core-type transitions are legal). If a future base update restores the
+  stock transition, the build fails loudly with a duplicate
+  `type_transition` error — that means the file is obsolete and can be
+  deleted.
 
 ## Verification (after flashing a ksu build)
 
