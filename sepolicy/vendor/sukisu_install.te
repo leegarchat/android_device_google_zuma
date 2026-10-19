@@ -1,9 +1,0 @@
-# SukiSU manager installer (vendor fragment).
-#
-# Intentionally EMPTY of rules: the only rule this installer needs,
-#   domain_trans(init, shell_exec, shell),
-# is purely between core types and MUST live in
-# ../system_ext/private/sukisu_install.te. Placed here it compiles
-# partially (allows without the typetransition) and the oneshot service
-# can never start — see that file for the on-device proof.
-# This file remains as a pointer so nobody re-adds the rule here.

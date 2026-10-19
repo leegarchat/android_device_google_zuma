@@ -7,13 +7,15 @@
 # after an OTA, ...). The script itself guards with a Settings.Global key
 # holding the last handled vercode, so repeats are no-ops.
 #
-# No seclabel on purpose: init executes /system/bin/sh and the stock
-# domain_trans(init, shell_exec, shell) policy moves the script into the
-# shell domain — the exact context `adb install`/`pm install` runs in.
-# (An explicit seclabel would need an init->domain transition rule that
-# stock policy does not provide; running in init context cannot exec
-# app_process at all.)
+# seclabel u:r:ksu:s0 on purpose: init has NO transition to the shell
+# domain on user builds (and vendor policy cannot mint core-only
+# transitions), so running /system/bin/sh without a seclabel aborts with
+# "no domain transition from u:r:init:s0". The KSU kernel patches in its
+# own init->ksu transition (it starts ksud itself via
+# `exec u:r:ksu:s0 root -- /data/adb/ksud ...`), therefore the installer
+# service runs in the ksu domain. KSU kernels only (see sukisu.mk gate).
 service sukisu_manager_install /system/bin/sh /system/etc/sukisu/install_manager.sh
+    seclabel u:r:ksu:s0
     user root
     group root
     disabled

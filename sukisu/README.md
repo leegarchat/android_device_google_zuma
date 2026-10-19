@@ -14,7 +14,6 @@ for custom kernels whose prebuilt directory name contains `ksu`
 | `install_manager.sh` | `/system/etc/sukisu/` | Installer script, run by init |
 | `init.sukisu_manager.rc` | `/vendor/etc/init/` | Oneshot service + `boot_completed` trigger (auto-imported) |
 | `sukisu.mk` | (build only) | `PRODUCT_COPY_FILES`, self-gated on ksu kernel |
-| `../sepolicy/vendor/sukisu_install.te` | (policy only) | **Required**: re-applies `domain_trans(init, shell_exec, shell)` — see below |
 | `README.md` | — | this file |
 
 `device/google/zuma/common.mk` includes `sukisu.mk` (akita/husky/shiba all
@@ -24,18 +23,13 @@ include `common.mk` after `TARGET_KERNEL_DIR` is resolved).
 
 1. Every boot that reaches `sys.boot_completed=1` (first boot after setup,
    first boot after OTA, ...) init starts the disabled oneshot service
-   `sukisu_manager_install` → `/system/bin/sh install_manager.sh` as root.
-2. No `seclabel` on purpose: init executes `shell_exec` and the stock
-   `domain_trans(init, shell_exec, shell)` policy moves the script into the
-   shell domain — exactly the context `adb install` / `pm install` runs in.
-   (An explicit seclabel would need an init→domain transition rule stock
-   policy does not ship; staying in init context cannot exec `app_process`
-   at all — `zygote_exec` has no init transition. Verified against
-   `system/sepolicy/private/init.te`, `te_macros`, `service.cpp`.)
-3. The script (`pm install -r`, staged via `/data/local/tmp` like `adb
+   `sukisu_manager_install` → `/system/bin/sh install_manager.sh` as root
+   in the `ksu` domain (`seclabel u:r:ksu:s0`, patched in by the KSU
+   kernel itself).
+2. The script (`pm install -r`, staged via `/data/local/tmp` like `adb
    install` does) installs or updates the manager silently, then records
    the vercode in `Settings.Global sukisu_manager_handled_vercode`.
-4. Key == VER → no-op. Installed versionCode == VER (side-load, backup
+3. Key == VER → no-op. Installed versionCode == VER (side-load, backup
    restore) → just record key. Installed newer than bundled → keep it, no
    downgrade, record key. Installed older/missing → `pm install -r`
    (update or fresh install). Install failed → key untouched, retry next
@@ -53,28 +47,22 @@ are handled naturally — first run with the new script sees key != VER and
 reconciles from the real package state (same version → record key, older →
 update, newer → keep).
 
-## SELinux: why the transition lives in system_ext/private
+## SELinux: why seclabel u:r:ksu:s0
 
-The service runs `/system/bin/sh` with NO seclabel, so init needs an
-`init -> shell` domain transition on exec of `shell_exec`. Facts
-established on-device (Pixel 8, Oct 2026 image, root via manager):
+The service runs `/system/bin/sh` with `seclabel u:r:ksu:s0`. Without a
+seclabel, init needs an `init -> shell` transition on exec of
+`shell_exec` — which does not exist on user builds, and vendor policy
+cannot mint core-only transitions (proven on-device: a
+`domain_trans(init, shell_exec, shell)` in `sepolicy/vendor/` compiles to
+allows without the `typetransition`, and manual `start` aborts with
+`Could not ctl.start ... no domain transition from u:r:init:s0`).
 
-- The merged policy contains `(typetransition adbd shell_exec process
-  shell)` but NO `(typetransition init shell_exec process shell)` —
-  checked in both `plat_sepolicy.cil` and `vendor_sepolicy.cil` pulled
-  from the device. Manual `start sukisu_manager_install` aborts with
-  `Could not ctl.start ... no domain transition from u:r:init:s0`.
-- A `domain_trans(init, shell_exec, shell)` placed in
-  `sepolicy/vendor/sukisu_install.te` compiles PARTIALLY: the four allow
-  rules land in `vendor_sepolicy.cil`, the `typetransition` is silently
-  dropped (vendor policy cannot mint core-only transitions). The service
-  then fails at every boot with zero logcat footprint.
-- Therefore the rule lives in
-  `../system_ext/private/sukisu_install.te` (platform policy, where
-  core-type transitions are legal). If a future base update restores the
-  stock transition, the build fails loudly with a duplicate
-  `type_transition` error — that means the file is obsolete and can be
-  deleted.
+The KSU kernel patches its own `init -> ksu` transition at boot (it
+starts ksud itself via `exec u:r:ksu:s0 root -- /data/adb/ksud ...` —
+visible as strings in the kernel image), so the installer service
+reuses the KSU-exclusive context. Verified on-device by replacing the rc
+in recovery: service runs to `stopped`, key recorded, manager installed.
+KSU kernels only (see `sukisu.mk` gate); stock kernels get no files.
 
 ## Verification (after flashing a ksu build)
 
