@@ -59,7 +59,6 @@ BOARD_PREBUILT_VENDOR_BOOTIMAGE := $(wildcard $(TARGET_KERNEL_DIR)/vendor_boot.i
 
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
-BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT := true
 TARGET_RECOVERY_WIPE := device/google/zuma/conf/recovery.wipe
 
 # This is the fstab file that will be included in the recovery image.  Note that
