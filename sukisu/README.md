@@ -1,20 +1,22 @@
-# SukiSU dev-manager one-shot installer (zuma family)
+# SukiSU manager one-shot installer (zuma family)
 
-Installs the reSukiSU DEV manager (`com.resukisu.resukisu.dev`, vercode
-35260) exactly once as a regular
+Installs the reSukiSU manager as a regular
 **user app** — never as a system app — on akita / husky / shiba, but only
 for custom kernels whose prebuilt directory name contains `ksu`
 (e.g. `shiba_wksu21`). Stock kernels get nothing.
 
-The legacy manager (`com.resukisu.resukisu`) does not work with the new
-kernels and cannot coexist with the dev one, so the installer migrates
-its settings and uninstalls it (see below).
+Two flavors exist: stable (`com.resukisu.resukisu`) and dev
+(`com.resukisu.resukisu.dev`). The tree ships exactly one APK; the
+installer makes that flavor active (install/update), migrates settings
+from the other one, and uninstalls it — two KSU managers cannot coexist.
+Switching back and forth is just swapping the APK in the tree (see
+"Bumping"), migration works both ways (same DataStore proto, same keys).
 
 ## Files
 
 | File | Installed to | Purpose |
 |---|---|---|
-| `ReSukiSU_dev_35260.apk` | `/system/etc/sukisu/` | Inert manager copy. Not scanned as an app (only `app/`/`priv-app/` are scanned) |
+| `ReSukiSU[_dev]_<vercode>.apk` | `/system/etc/sukisu/` | Inert manager copy. Not scanned as an app (only `app/`/`priv-app/` are scanned) |
 | `install_manager.sh` | `/system/etc/sukisu/` | Installer script, run by init |
 | `init.sukisu_manager.rc` | `/vendor/etc/init/` | Oneshot service + `boot_completed` trigger (auto-imported) |
 | `sukisu.mk` | (build only) | `PRODUCT_COPY_FILES`, self-gated on ksu kernel |
@@ -31,24 +33,27 @@ include `common.mk` after `TARGET_KERNEL_DIR` is resolved).
    in the `ksu` domain (`seclabel u:r:ksu:s0`, patched in by the KSU
    kernel itself).
 2. The script (`pm install -r`, staged via `/data/local/tmp` like `adb
-   install` does) installs or updates the DEV manager silently, then records
-   the vercode in `Settings.Global sukisu_manager_dev_handled_vercode`.
-3. Key == VER → no-op (unless the legacy manager is still around — it gets
+   install` does) installs or updates the bundled flavor silently, then
+   records the vercode in that flavor's `Settings.Global` key
+   (`sukisu_manager_handled_vercode` stable,
+   `sukisu_manager_dev_handled_vercode` dev).
+3. Key == VER → no-op (unless the other flavor is still around — it gets
    removed). Installed versionCode == VER (side-load, backup restore) →
    just record key. Installed newer than bundled → keep it, no downgrade,
    record key. Installed older/missing → `pm install -r` (update or fresh
-   install). Install failed → key untouched, legacy kept, retry next boot.
-   User uninstall of the new manager after handling → key stays == VER →
-   respected, no reinstall.
-4. Settings migration: both managers keep preferences in the same
-   DataStore proto (`files/datastore/app_preferences.preferences_pb`,
-   same keys incl. themes), so the legacy file is copied over, re-owned
-   to the new app uid and relabeled. Only when the legacy file exists
-   and the new one is missing or differs; both apps are force-stopped
-   first. WebView prefs / caches / traces are deliberately NOT migrated.
-5. Legacy removal: `pm uninstall com.resukisu.resukisu`. Only after the
-   new manager is confirmed installed; failure retries next boot. If the
-   new install failed, the legacy manager is left alone.
+   install). Install failed → key untouched, other flavor kept, retry next
+   boot. User uninstall of the active flavor after handling → key stays ==
+   VER → respected, no reinstall.
+4. Settings migration inactive → active: both flavors keep preferences in
+   the same DataStore proto (`files/datastore/app_preferences.preferences_pb`,
+   same keys incl. themes), so the file is copied over, re-owned (whole
+   `files/` subtree — root-made dirs lack MLS categories or the app
+   crash-loops) and relabeled. Only when the source file exists and the
+   target one is missing or differs; both apps are force-stopped first.
+   WebView prefs / caches / traces are deliberately NOT migrated.
+5. Inactive flavor removal: `pm uninstall` the other package. Only after
+   the active flavor is confirmed installed; failure retries next boot.
+   If the active install failed, the other flavor is left alone.
 
 ## Bumping the manager
 
@@ -81,13 +86,12 @@ KSU kernels only (see `sukisu.mk` gate); stock kernels get no files.
 ## Verification (after flashing a ksu build)
 
 - `ls /system/etc/sukisu/` — APK + script present; stock-kernel build: absent.
-- `settings get global sukisu_manager_dev_handled_vercode` — `35260` after first boot.
-- `pm list packages com.resukisu.resukisu.dev` — present, and it is a user app
-  (`dumpsys package com.resukisu.resukisu.dev | grep -i system` → empty / `codePath`
-  under `/data/app`).
-- `pm list packages com.resukisu.resukisu` → empty (legacy removed).
-- Themes/settings carried over (same DataStore keys).
-- `logcat -s sukisu-install` — `install OK` + `settings migrated OK` +
-  `legacy manager removed` on first boot, `already handled` afterwards
-  (script mirrors every line to logcat; `stdio_to_kmsg` alone is only
-  readable with root).
+- Handled key for the bundled flavor (`sukisu_manager_handled_vercode`
+  stable / `sukisu_manager_dev_handled_vercode` dev) holds the vercode
+  after first boot.
+- Bundled package present as a user app (`dumpsys package <pkg> |
+  grep -i system` → empty / `codePath` under `/data/app`).
+- The other flavor absent; themes/settings carried over.
+- `logcat -s sukisu-install` shows install/migrate/remove lines on first
+  boot, `already handled` afterwards (script mirrors every line to
+  logcat; `stdio_to_kmsg` alone is only readable with root).

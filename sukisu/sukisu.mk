@@ -7,22 +7,14 @@
 # Stock kernels (no ksu in the name) get nothing: no files, no service.
 #
 # What lands in the build (only in the ksu case):
-#   /system/etc/sukisu/ReSukiSU_dev_<vercode>.apk — INERT copy, NOT a system app
-#   /system/etc/sukisu/install_manager.sh          — installer script
-#   /vendor/etc/init/init.sukisu_manager.rc        — oneshot service + boot trigger
+#   /system/etc/sukisu/<manager>.apk   — INERT copy, NOT a system app
+#   /system/etc/sukisu/install_manager.sh — installer script
+#   /vendor/etc/init/init.sukisu_manager.rc — oneshot service + boot trigger
 #
-# How it works: after every boot_completed the service runs the script as
-# root in the ksu domain and silently installs the DEV manager
-# (com.resukisu.resukisu.dev) via `pm install` (same path as `adb
-# install`). A Settings.Global key holding the last handled vercode
-# prevents repeats, so a deliberate user uninstall is respected; shipping
-# a newer APK (new vercode in the filename) reinstalls exactly once.
-# The script also migrates settings from the legacy manager
-# (com.resukisu.resukisu, same DataStore proto incl. themes) and then
-# uninstalls it — two KSU managers cannot coexist.
-#
-# Bumping the manager: replace the .apk (keep the <label>_<vercode>.apk
-# naming — the script parses vercode from the filename), nothing else.
+# Flavor switching (stable <-> dev) is purely version-driven: the tree
+# holds exactly one APK (stable ReSukiSU_<ver>.apk or dev
+# ReSukiSU_dev_<ver>.apk, enforced at build time); the installer detects
+# the flavor from the filename and makes it the active manager.
 
 # TARGET_KERNEL_DIR is already resolved by the device makefiles
 # (device-*.mk) before zuma/common.mk includes this file.
@@ -32,8 +24,16 @@ ifneq ($(findstring ksu,$(_SUKISU_KERNEL_LC)),)
 # NOTE: no $(info)/$(warning) here — release-config parser chokes on them
 # during 'pre product config' phase.
 
+# Exactly one manager APK lives in sukisu/ (stable ReSukiSU_<ver>.apk or
+# dev ReSukiSU_dev_<ver>.apk); the installer detects the flavor from the
+# filename. Two files = ambiguous, fail loudly.
+_SUKISU_APKS := $(wildcard device/google/zuma/sukisu/*.apk)
+ifneq ($(words $(_SUKISU_APKS)),1)
+$(error sukisu: expected exactly one APK in device/google/zuma/sukisu, found: $(_SUKISU_APKS))
+endif
+
 PRODUCT_COPY_FILES += \
-    device/google/zuma/sukisu/ReSukiSU_dev_35260.apk:$(TARGET_COPY_OUT_SYSTEM)/etc/sukisu/ReSukiSU_dev_35260.apk \
+    $(_SUKISU_APKS):$(TARGET_COPY_OUT_SYSTEM)/etc/sukisu/$(notdir $(_SUKISU_APKS)) \
     device/google/zuma/sukisu/install_manager.sh:$(TARGET_COPY_OUT_SYSTEM)/etc/sukisu/install_manager.sh \
     device/google/zuma/sukisu/init.sukisu_manager.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.sukisu_manager.rc
 
