@@ -209,20 +209,27 @@ else
 fi
 
 # --- Step 3: remove the inactive flavor (cannot coexist) ---
-if is_installed "$OTHER"; then
-    log "removing inactive flavor $OTHER"
-    if pm uninstall "$OTHER" 2>&1; then
-        if is_installed "$OTHER"; then
-            log "uninstall reported success but package still present, retry next boot"
+# Only when the active flavor is actually installed: if the user
+# deliberately removed the active one, the inactive one is their choice
+# and must be left alone.
+if is_installed "$PKG"; then
+    if is_installed "$OTHER"; then
+        log "removing inactive flavor $OTHER"
+        if pm uninstall "$OTHER" 2>&1; then
+            if is_installed "$OTHER"; then
+                log "uninstall reported success but package still present, retry next boot"
+                exit 1
+            fi
+            log "inactive flavor removed"
+        else
+            log "inactive uninstall failed, retry next boot"
             exit 1
         fi
-        log "inactive flavor removed"
     else
-        log "inactive uninstall failed, retry next boot"
-        exit 1
+        log "no inactive flavor installed"
     fi
 else
-    log "no inactive flavor installed"
+    log "active flavor absent, keeping user's packages untouched"
 fi
 
 exit 0
