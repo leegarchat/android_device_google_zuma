@@ -441,8 +441,11 @@ DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE += \
 # ZRAM writeback
 include hardware/google/pixel/mm/device_gki.mk
 
-# PixelExtraParts
-$(call inherit-product-if-exists, packages/apps/PixelExtraParts/device.mk)
+# PixelExtraParts — plain include (NOT inherit-product): this file must run
+# immediately in global scope AFTER the stock entries above, so the
+# thermal filter-out at its end actually sees them. inherit-product would
+# defer it into a node-local scope where PRODUCT_PACKAGES is empty.
+-include packages/apps/PixelExtraParts/device.mk
 
 # SukiSU manager one-shot installer (self-gated on ksu kernels inside).
 include device/google/zuma/sukisu/sukisu.mk
