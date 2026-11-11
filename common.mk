@@ -35,10 +35,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     misc_writer
 
-# Thermal
-PRODUCT_PACKAGES += \
-    android.hardware.thermal-service.pixel \
-    thermal_symlinks
 
 TARGET_BOARD_PLATFORM := zuma
 
@@ -52,8 +48,7 @@ PRODUCT_SOONG_NAMESPACES += \
 	hardware/google/av \
 	hardware/google/interfaces \
 	hardware/google/pixel \
-	hardware/google/pixel/thermal \
-	device/google/zuma
+    device/google/zuma
 
 # Set the environment variable to switch the Keymint HAL service to Rust
 TRUSTY_KEYMINT_IMPL := rust
@@ -441,10 +436,10 @@ DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE += \
 # ZRAM writeback
 include hardware/google/pixel/mm/device_gki.mk
 
-# PixelExtraParts — plain include (NOT inherit-product): this file must run
-# immediately in global scope AFTER the stock entries above, so the
-# thermal filter-out at its end actually sees them. inherit-product would
-# defer it into a node-local scope where PRODUCT_PACKAGES is empty.
+# PixelExtraParts — plain include (NOT inherit-product): only additive
+# entries (PRODUCT_PACKAGES/COPY_FILES, namespaces, sepolicy, weave regen),
+# so any global scope works. Stock-thermal suppression is Soong-side
+# (overrides in thermal_hal/Android.bp), order-independent.
 -include packages/apps/PixelExtraParts/device.mk
 
 # SukiSU manager one-shot installer (self-gated on ksu kernels inside).
