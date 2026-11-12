@@ -39,11 +39,16 @@ include `common.mk` after `TARGET_KERNEL_DIR` is resolved).
    `sukisu_manager_dev_handled_vercode` dev).
 3. Key == VER → no-op (unless the other flavor is still around — it gets
    removed). Installed versionCode == VER (side-load, backup restore) →
-   just record key. Installed newer than bundled → keep it, no downgrade,
-   record key. Installed older/missing → `pm install -r` (update or fresh
-   install). Install failed → key untouched, other flavor kept, retry next
-   boot. User uninstall of the active flavor after handling → key stays ==
-   VER → respected, no reinstall.
+   just record key. Installed SAME-flavor newer than bundled → keep it,
+   no downgrade, record key. Other flavor present while bundled is
+   missing → channel switch: install bundled even if its vercode is lower
+   (release status beats version number) and even if the handled key
+   already equals VER (the key may be stale from an older firmware
+   generation). User uninstall of the active flavor is respected only
+   when neither flavor is installed. Installed older/missing → `pm install
+   -r` (update or fresh install). Install failed → key untouched, other
+   flavor kept, retry next boot. User uninstall of the active flavor after
+   handling → key stays == VER → respected, no reinstall.
 4. Settings migration inactive → active: both flavors keep preferences in
    the same DataStore proto (`files/datastore/app_preferences.preferences_pb`,
    same keys incl. themes), so the file is copied over, re-owned (whole

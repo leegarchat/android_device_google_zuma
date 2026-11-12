@@ -4,16 +4,24 @@
 # Runs as an init oneshot service (root, ksu SELinux domain, see
 # init.sukisu_manager.rc) triggered on sys.boot_completed=1.
 #
-# Bidirectional flavor switch, driven purely by versionCode:
-# the tree ships exactly ONE manager APK (stable com.resukisu.resukisu or
-# dev com.resukisu.resukisu.dev, named <label>[_dev]_<vercode>.apk).
-# Whichever flavor is bundled wins: it gets installed/updated, settings
-# are migrated from the other flavor, and the other flavor is uninstalled
-# (two KSU managers cannot coexist).
+# Bidirectional flavor switch, driven by release STATUS first, vercode
+# second: the tree ships exactly ONE manager APK (stable
+# com.resukisu.resukisu or dev com.resukisu.resukisu.dev, named
+# <label>[_dev]_<vercode>.apk). Whichever flavor is bundled wins the
+# channel — even when its vercode is LOWER than the installed other
+# flavor (a dev build never vetoes a stable bundle and vice versa).
+# Vercode comparison applies ONLY within the same flavor (never
+# downgrade an installed newer build of the bundled flavor).
 #   bundled dev 35260  vs installed stable 35171 -> switch to dev
-#   bundled stable 35300 vs installed dev 35260  -> switch back to stable
+#   bundled stable 35259 vs installed dev 35260  -> switch BACK to stable
+#       (status parity beats vercode)
 #   bundled == installed flavor+vercode          -> no-op (record key)
-#   installed newer than bundled                 -> keep, no downgrade
+#   installed SAME-flavor newer than bundled     -> keep, no downgrade
+#   bundled flavor missing + other flavor present -> channel switch:
+#       install bundled even if HANDLED==VER (the key may be stale from
+#       an older firmware generation); user-uninstall respect applies
+#       only when NEITHER flavor is installed
+#   bundled missing + nothing installed + HANDLED==VER -> respect, no install
 #
 # Settings migration: both flavors keep preferences in the same DataStore
 # proto (files/datastore/app_preferences.preferences_pb, same keys incl.
@@ -113,35 +121,53 @@ case "$HANDLED" in
     null|"") HANDLED="" ;;
 esac
 
-# --- Step 1: reconcile the ACTIVE flavor ---
-if [ "$HANDLED" = "$VER" ]; then
-    if is_installed "$PKG"; then
-        log "already handled (global $KEY=$VER), nothing to do"
-    else
-        log "handled $VER but $PKG missing (user uninstall?), respecting it"
-    fi
+# --- Step 1: reconcile the ACTIVE (bundled) flavor ---
+# Status first: the mere presence of the OTHER flavor means a channel
+# switch is in progress (or the channel already flipped) — the bundled
+# flavor gets installed no matter the vercodes or stale handled keys.
+# Vercode is compared only against the SAME flavor.
+B_INSTALLED=false
+O_INSTALLED=false
+is_installed "$PKG" && B_INSTALLED=true
+is_installed "$OTHER" && O_INSTALLED=true
+
+if $B_INSTALLED && ! $O_INSTALLED && [ "$HANDLED" = "$VER" ]; then
+    log "already handled (global $KEY=$VER), nothing to do"
+elif ! $B_INSTALLED && ! $O_INSTALLED && [ "$HANDLED" = "$VER" ]; then
+    log "handled $VER but nothing installed (user uninstall?), respecting it"
+    exit 0
 else
     INST_VER="$(installed_ver "$PKG")"
     case "$INST_VER" in
         ''|*[!0-9]*) INST_VER="" ;;
     esac
+    NEED_INSTALL=false
 
+    if ! $B_INSTALLED && $O_INSTALLED; then
+        # Channel switch: bundled flavor missing, other flavor present.
+        # Install bundled unconditionally — its vercode may be lower
+        # than the other's (release status beats version number), and
+        # HANDLED may equal VER from an older firmware generation.
+        log "channel switch: installing bundled $PKG vercode $VER over present $OTHER"
+        NEED_INSTALL=true
     # Same version already on device (side-load, backup restore, ...):
     # just record it, don't reinstall.
-    if [ -n "$INST_VER" ] && [ "$INST_VER" = "$VER" ]; then
+    elif [ -n "$INST_VER" ] && [ "$INST_VER" = "$VER" ]; then
         log "package $PKG $VER already present, recording"
         mark_handled || exit 1
-    # Newer version already on device: never downgrade, just record.
+    # Same flavor newer on device: never downgrade, just record.
     elif [ -n "$INST_VER" ] && [ "$INST_VER" -gt "$VER" ] 2>/dev/null; then
         log "package $PKG $INST_VER newer than bundled $VER, keeping it"
         mark_handled || exit 1
+    elif [ -n "$INST_VER" ]; then
+        log "updating $PKG $INST_VER -> $VER from $APK"
+        NEED_INSTALL=true
     else
-        if [ -n "$INST_VER" ]; then
-            log "updating $PKG $INST_VER -> $VER from $APK"
-        else
-            log "installing $PKG from $APK (vercode $VER)"
-        fi
+        log "installing $PKG from $APK (vercode $VER)"
+        NEED_INSTALL=true
+    fi
 
+    if $NEED_INSTALL; then
         cp "$APK" "$STAGE" 2>/dev/null || {
             log "staging copy failed"
             exit 1
@@ -163,12 +189,8 @@ else
 fi
 
 if ! is_installed "$PKG"; then
-    if [ "$HANDLED" = "$VER" ]; then
-        log "active flavor absent by user choice, inactive cleanup only"
-    else
-        log "active flavor not installed, keeping other for now; retry next boot"
-        exit 1
-    fi
+    log "active flavor not installed, keeping other for now; retry next boot"
+    exit 1
 fi
 
 # --- Step 2: migrate settings inactive -> active ---
