@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_system_theme_summary">Personalizza l\'aspetto del sistema con temi e pacchetti di icone</string>
+    <string name="custom_system_theme_title">Temi</string>
+    <string name="emoji_style_title">Stile emoji</string>
+    <string name="font_styles_summary">Cambia lo stile dei caratteri di sistema</string>
+    <string name="font_styles_title">Stili dei caratteri</string>
+    <string name="gradient_settings_summary">Applica colori sfumati agli elementi di sistema</string>
+    <string name="gradient_settings_title">Personalizzazione del gradiente</string>
+    <string name="lock_glymps_enable_summary">Cambia lo sfondo ogni volta che lo schermo si accende</string>
+    <string name="lock_glymps_title">Glymps per lo sfondo</string>
+    <string name="settings_icon_summary">Personalizza lo stile dell\'interfaccia dell\'app Impostazioni</string>
+    <string name="settings_icon_title">Stile delle impostazioni</string>
+    <string name="themes_audio_category">Audio</string>
+    <string name="themes_boot_animation_title">Animazione di avvio</string>
+    <string name="themes_fonts_category">Caratteri</string>
+    <string name="themes_icon_shape_title">Forma delle icone</string>
+    <string name="themes_icons_category">Icone</string>
+    <string name="themes_lock_sound_title">Suono di blocco</string>
+    <string name="themes_monet_colors_category">Monet &amp; Colori</string>
+    <string name="themes_monet_summary">Personalizza il motore dei temi integrato di Android</string>
+    <string name="themes_monet_title">Impostazioni Monet</string>
+    <string name="themes_navigation_bar_icons_summary">Imposta lo stile personalizzato della barra di navigazione</string>
+    <string name="themes_navigation_bar_icons_title">Stile della barra di navigazione</string>
+    <string name="themes_title">Temi</string>
+    <string name="themes_udfps_animation_summary">Imposta l\'animazione dell\'icona UDFPS</string>
+    <string name="themes_udfps_animation_title">Animazione UDFPS</string>
+    <string name="themes_udfps_icon_summary">Imposta lo stile dell\'icona UDFPS</string>
+    <string name="themes_udfps_icon_title">Icona UDFPS</string>
+    <string name="themes_unlock_sound_title">Suono di sblocco</string>
+    <string name="themes_visual_effects_category">Effetti visivi</string>
+    <string name="video_wallpaper_category">Personalizzazione dello sfondo</string>
+    <string name="video_wallpaper_category_summary">Imposta sfondi animati (MP4, GIF, WebP)</string>
+    <string name="video_wallpaper_category_title">Sfondo video</string>
+    <string name="wallpaper_settings_summary">Configura stili e impostazioni dello sfondo</string>
+    <string name="wallpaper_styles_title">Stili sfondo</string>
+</resources>

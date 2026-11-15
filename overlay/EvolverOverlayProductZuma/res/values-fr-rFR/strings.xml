@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="themes_audio_category">Audio</string>
+    <string name="themes_boot_animation_title">Animation de démarrage</string>
+    <string name="themes_fonts_category">Polices</string>
+    <string name="themes_icon_shape_title">Forme d\'icône</string>
+    <string name="themes_icons_category">Icônes</string>
+    <string name="themes_lock_sound_title">Son de verrouillage</string>
+    <string name="themes_monet_summary">Personnaliser le moteur de thème intégré à Android</string>
+    <string name="themes_monet_title">Paramètres de Monet</string>
+    <string name="themes_navigation_bar_icons_summary">Définir le style de la barre de navigation</string>
+    <string name="themes_navigation_bar_icons_title">Style de barre de navigation</string>
+    <string name="themes_title">Thèmes</string>
+    <string name="themes_udfps_animation_summary">Définir le style d\'animation du capteur d\'enpreintes digitales</string>
+    <string name="themes_udfps_animation_title">Animation du lecteur d\'empreintes sous l\'écran</string>
+    <string name="themes_udfps_icon_summary">Définir le style du capteur d\'enpreintes digitales</string>
+    <string name="themes_udfps_icon_title">Icône du capteur d\'empreinte digitale</string>
+    <string name="themes_unlock_sound_title">Son de déverouillage</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_system_theme_summary">使用主題與圖示包自訂系統外觀</string>
+    <string name="custom_system_theme_title">主題</string>
+    <string name="emoji_style_title">表情符號樣式</string>
+    <string name="font_styles_summary">設定系統字型</string>
+    <string name="font_styles_title">字型</string>
+    <string name="gradient_settings_summary">為系統元素套用漸層色彩</string>
+    <string name="gradient_settings_title">漸層自訂</string>
+    <string name="lock_glymps_enable_summary">每次螢幕點亮時更換桌布</string>
+    <string name="lock_glymps_title">桌布 Glymps</string>
+    <string name="settings_icon_summary">自訂設定應用程式的 UI 樣式</string>
+    <string name="settings_icon_title">設定應用程式樣式</string>
+    <string name="themes_audio_category">音效</string>
+    <string name="themes_boot_animation_title">開機動畫</string>
+    <string name="themes_fonts_category">字型</string>
+    <string name="themes_icon_shape_title">圖示形狀</string>
+    <string name="themes_icons_category">圖示</string>
+    <string name="themes_lock_sound_title">鎖定音效</string>
+    <string name="themes_monet_colors_category">莫内 &amp; 顔色</string>
+    <string name="themes_monet_summary">自定義 Android 內建主題引擎</string>
+    <string name="themes_monet_title">Monet 設定</string>
+    <string name="themes_navigation_bar_icons_summary">設定自訂導覽列樣式</string>
+    <string name="themes_navigation_bar_icons_title">導覽列樣式</string>
+    <string name="themes_title">主題</string>
+    <string name="themes_udfps_animation_summary">設定自訂指紋辨識動畫樣式</string>
+    <string name="themes_udfps_animation_title">螢幕下指紋辨識動畫</string>
+    <string name="themes_udfps_icon_summary">設定自訂指紋辨識圖示樣式</string>
+    <string name="themes_udfps_icon_title">指紋辨識圖示</string>
+    <string name="themes_unlock_sound_title">解鎖音效</string>
+    <string name="themes_visual_effects_category">視覺效果</string>
+    <string name="video_wallpaper_category">桌布自訂</string>
+    <string name="video_wallpaper_category_summary">設定動態桌布（MP4、GIF、WebP）</string>
+    <string name="video_wallpaper_category_title">影片桌布</string>
+    <string name="wallpaper_settings_summary">設定壁紙風格和設置</string>
+    <string name="wallpaper_styles_title">壁紙風格</string>
+</resources>

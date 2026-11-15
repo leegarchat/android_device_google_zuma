@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_system_theme_summary">Anpassa systemutseende med teman och ikonpaket</string>
+    <string name="custom_system_theme_title">Teman</string>
+    <string name="emoji_style_title">Emoji-stil</string>
+    <string name="font_styles_summary">Ändra systemets teckensnittsstil</string>
+    <string name="font_styles_title">Teckensnittsstilar</string>
+    <string name="gradient_settings_summary">Tillämpa övertoningsfärger på systemelement</string>
+    <string name="gradient_settings_title">Anpassning av övertoning</string>
+    <string name="lock_glymps_enable_summary">Byt bakgrundsbild varje gång skärmen slås på</string>
+    <string name="lock_glymps_title">Wallpaper Glymps</string>
+    <string name="settings_icon_summary">Anpassa gränssnittsstilen i appen Inställningar</string>
+    <string name="settings_icon_title">Inställningsstil</string>
+    <string name="themes_audio_category">Ljud</string>
+    <string name="themes_boot_animation_title">Startanimering</string>
+    <string name="themes_fonts_category">Teckensnitt</string>
+    <string name="themes_icon_shape_title">Ikonform</string>
+    <string name="themes_icons_category">Ikoner</string>
+    <string name="themes_lock_sound_title">Låsljud</string>
+    <string name="themes_monet_colors_category">Monet &amp; färger</string>
+    <string name="themes_monet_summary">Anpassa Androids inbyggda temamotor</string>
+    <string name="themes_monet_title">Monet-inställningar</string>
+    <string name="themes_navigation_bar_icons_summary">Ange stil för navigeringsfältets ikoner</string>
+    <string name="themes_navigation_bar_icons_title">Ikoner i navigeringsfältet</string>
+    <string name="themes_title">Teman</string>
+    <string name="themes_udfps_animation_summary">Ange animationsstil för UDFPS</string>
+    <string name="themes_udfps_animation_title">UDFPS-animering</string>
+    <string name="themes_udfps_icon_summary">Ange stil för UDFPS-ikonen</string>
+    <string name="themes_udfps_icon_title">UDFPS-ikon</string>
+    <string name="themes_unlock_sound_title">Upplåsningsljud</string>
+    <string name="themes_visual_effects_category">Visuella effekter</string>
+    <string name="video_wallpaper_category">Anpassning av bakgrundsbild</string>
+    <string name="video_wallpaper_category_summary">Ange animerade bakgrundsbilder (MP4, GIF, WebP)</string>
+    <string name="video_wallpaper_category_title">Videobakgrund</string>
+    <string name="wallpaper_settings_summary">Konfigurera stilar och effekter för bakgrundsbilder</string>
+    <string name="wallpaper_styles_title">Bakgrundsbildsstilar</string>
+    <string name="wallpaper_zoom_summary">Stäng av för att visa bakgrundsbilden utan extra zoomning</string>
+    <string name="wallpaper_zoom_title">Zoomning av bakgrundsbild</string>
+</resources>

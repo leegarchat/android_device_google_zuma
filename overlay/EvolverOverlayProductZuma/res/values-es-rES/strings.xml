@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="font_styles_summary">Cambiar estilo de fuente del sistema</string>
+    <string name="font_styles_title">Estilos de fuentes</string>
+    <string name="themes_audio_category">Audio</string>
+    <string name="themes_boot_animation_title">Animación de inicio</string>
+    <string name="themes_fonts_category">Fuentes</string>
+    <string name="themes_icon_shape_title">Forma del icono</string>
+    <string name="themes_icons_category">Iconos</string>
+    <string name="themes_lock_sound_title">Sonido de bloqueo</string>
+    <string name="themes_monet_summary">Personalizar el motor de temas integrado de Android</string>
+    <string name="themes_monet_title">Ajustes de Monet</string>
+    <string name="themes_navigation_bar_icons_summary">Establecer estilo de icono en la barra de navegación</string>
+    <string name="themes_navigation_bar_icons_title">Iconos de la barra de navegación</string>
+    <string name="themes_title">Temas</string>
+    <string name="themes_udfps_animation_summary">Establece el estilo de animación de UDFPS</string>
+    <string name="themes_udfps_animation_title">Animación de Huella en Pantalla</string>
+    <string name="themes_udfps_icon_summary">Establece el estilo del icono de UDFPS</string>
+    <string name="themes_udfps_icon_title">Icono UDFPS</string>
+    <string name="themes_unlock_sound_title">Sonido de desbloqueo</string>
+    <string name="wallpaper_settings_summary">Configurar los estilos y ajustes del fondo de pantalla</string>
+    <string name="wallpaper_styles_title">Estilos de fondo de pantalla</string>
+</resources>

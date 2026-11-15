@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_system_theme_summary">Tuỳ chỉnh giao diện hệ thống với chủ đề và bộ biểu tượng</string>
+    <string name="custom_system_theme_title">Giao diện</string>
+    <string name="font_styles_summary">Thay đổi kiểu phông chữ hệ thống</string>
+    <string name="font_styles_title">Kiểu phông chữ</string>
+    <string name="gradient_settings_summary">Áp dụng màu gradient cho các thành phần hệ thống khác nhau</string>
+    <string name="gradient_settings_title">Tuỳ chỉnh gradient</string>
+    <string name="lock_glymps_enable_summary">Thay đổi hình nền mỗi khi màn hình sáng lên</string>
+    <string name="lock_glymps_title">Hình nền Glymps</string>
+    <string name="themes_audio_category">Âm thanh</string>
+    <string name="themes_boot_animation_title">Hiệu ứng khởi động</string>
+    <string name="themes_fonts_category">Phông chữ</string>
+    <string name="themes_icon_shape_title">Hình dạng biểu tượng</string>
+    <string name="themes_icons_category">Biểu tượng</string>
+    <string name="themes_lock_sound_title">Âm thanh khóa</string>
+    <string name="themes_monet_summary">Tùy chỉnh công cụ chủ đề tích hợp của Android</string>
+    <string name="themes_monet_title">Cài đặt Monet</string>
+    <string name="themes_navigation_bar_icons_summary">Đặt kiểu biểu tượng thanh điều hướng</string>
+    <string name="themes_navigation_bar_icons_title">Biểu tượng thanh điều hướng</string>
+    <string name="themes_title">Giao diện</string>
+    <string name="themes_udfps_animation_summary">Đặt kiểu hiệu ứng cảm biến vân tay</string>
+    <string name="themes_udfps_animation_title">Hiệu ứng vân tay trên màn hình</string>
+    <string name="themes_udfps_icon_summary">Đặt kiểu biểu tượng cảm biến vân tay</string>
+    <string name="themes_udfps_icon_title">Biểu tượng vân tay</string>
+    <string name="themes_unlock_sound_title">Âm thanh mở khóa</string>
+    <string name="video_wallpaper_category">Tùy chỉnh hình nền</string>
+    <string name="video_wallpaper_category_summary">Đặt hình nền động (MP4, GIF, WebP)</string>
+    <string name="video_wallpaper_category_title">Hình nền video</string>
+    <string name="wallpaper_settings_summary">Tùy chỉnh kiểu và cài đặt hình nền</string>
+    <string name="wallpaper_styles_title">Kiểu hình nền</string>
+</resources>

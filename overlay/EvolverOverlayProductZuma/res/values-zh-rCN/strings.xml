@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_system_theme_summary">使用主题和图标包自定义系统外观</string>
+    <string name="custom_system_theme_title">主题</string>
+    <string name="emoji_style_title">表情符号风格</string>
+    <string name="font_styles_summary">更改系统字体样式</string>
+    <string name="font_styles_title">字体样式</string>
+    <string name="gradient_settings_summary">将渐变颜色应用于系统元素</string>
+    <string name="gradient_settings_title">自定义渐变</string>
+    <string name="lock_glymps_enable_summary">每次屏幕开启时更改壁纸</string>
+    <string name="lock_glymps_title">壁纸预览</string>
+    <string name="settings_icon_summary">自定义设置应用界面样式</string>
+    <string name="settings_icon_title">设置样式</string>
+    <string name="themes_audio_category">音频</string>
+    <string name="themes_boot_animation_title">开机动画样式</string>
+    <string name="themes_fonts_category">字体</string>
+    <string name="themes_icon_shape_title">图标形状</string>
+    <string name="themes_icons_category">图标</string>
+    <string name="themes_lock_sound_title">锁定音效</string>
+    <string name="themes_monet_colors_category">莫奈 &amp; 颜色</string>
+    <string name="themes_monet_summary">自定义 Android 内置主题引擎</string>
+    <string name="themes_monet_title">Monet 取色设置</string>
+    <string name="themes_navigation_bar_icons_summary">设置导航栏图标样式</string>
+    <string name="themes_navigation_bar_icons_title">导航栏图标</string>
+    <string name="themes_title">主题</string>
+    <string name="themes_udfps_animation_summary">设置指纹动画样式</string>
+    <string name="themes_udfps_animation_title">屏下指纹识别动画</string>
+    <string name="themes_udfps_icon_summary">设置屏下指纹图标样式</string>
+    <string name="themes_udfps_icon_title">屏下指纹图标</string>
+    <string name="themes_unlock_sound_title">解锁音效</string>
+    <string name="themes_visual_effects_category">视觉效果</string>
+    <string name="video_wallpaper_category">自定义壁纸</string>
+    <string name="video_wallpaper_category_summary">设置动画壁纸（MP4, GIF, WebP）</string>
+    <string name="video_wallpaper_category_title">视频壁纸</string>
+    <string name="wallpaper_settings_summary">配置壁纸样式和设置</string>
+    <string name="wallpaper_styles_title">壁纸样式</string>
+    <string name="wallpaper_zoom_summary">关闭以显示壁纸而不需要额外缩放</string>
+    <string name="wallpaper_zoom_title">壁纸缩放</string>
+</resources>

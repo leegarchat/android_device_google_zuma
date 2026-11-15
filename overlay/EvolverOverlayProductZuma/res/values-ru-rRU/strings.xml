@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="font_styles_summary">Изменить системный шрифт</string>
+    <string name="font_styles_title">Стиль шрифта</string>
+    <string name="themes_audio_category">Звуки</string>
+    <string name="themes_boot_animation_title">Анимация загрузки</string>
+    <string name="themes_fonts_category">Шрифты</string>
+    <string name="themes_icon_shape_title">Форма значков</string>
+    <string name="themes_icons_category">Иконки</string>
+    <string name="themes_lock_sound_title">Звук блокировки</string>
+    <string name="themes_monet_summary">Настройка встроенного движка тем Android</string>
+    <string name="themes_monet_title">Настройки Monet</string>
+    <string name="themes_navigation_bar_icons_summary">Выберите стиль панели навигации</string>
+    <string name="themes_navigation_bar_icons_title">Стиль панели навигации</string>
+    <string name="themes_title">Темы</string>
+    <string name="themes_udfps_animation_summary">Выберите анимацию для UDFPS</string>
+    <string name="themes_udfps_animation_title">Анимация UDFPS</string>
+    <string name="themes_udfps_icon_summary">Выберите иконку для подэкранного отпечатка пальца</string>
+    <string name="themes_udfps_icon_title">Иконка подэкранного отпечатка пальца</string>
+    <string name="themes_unlock_sound_title">Звук разблокировки</string>
+    <string name="wallpaper_settings_summary">Настройка стилей и обоев</string>
+    <string name="wallpaper_styles_title">Стили обоев</string>
+</resources>
