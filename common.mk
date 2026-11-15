@@ -357,7 +357,6 @@ PRODUCT_PACKAGES += \
     PixelConfigOverlayCommon \
     PixelConnectivityOverlay2023 \
     PixelDisplayServiceOverlayProductZuma \
-    EvolverOverlayProductZuma \
     PixelNfcOverlayCommon \
     PixelTetheringOverlay2021 \
     PixelWifiOverlay2024_midyearZuma \
