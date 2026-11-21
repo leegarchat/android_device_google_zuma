@@ -441,6 +441,6 @@ include hardware/google/pixel/mm/device_gki.mk
 # so any global scope works. Stock-thermal suppression is Soong-side
 # (overrides in thermal_hal/Android.bp), order-independent.
 -include packages/apps/PixelExtraParts/device.mk
-
+-include packages/apps/LeeGarUpdater/LeeGarUpdater.mk
 # SukiSU manager one-shot installer (self-gated on ksu kernels inside).
 include device/google/zuma/sukisu/sukisu.mk
