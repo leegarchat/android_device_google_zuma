@@ -1,10 +1,10 @@
 # SukiSU dev-manager one-shot installer (zuma family: akita/husky/shiba).
 #
-# Included from device/google/zuma/common.mk. Active ONLY for custom kernels
-# whose prebuilt directory name mentions ksu (case-insensitive), e.g.
-#   device/google/pixel-kernels/shiba_wksu21
-#   device/google/pixel-kernels/husky-cp3a-261005
-# Stock kernels (no ksu in the name) get nothing: no files, no service.
+# Included from device/google/zuma/common.mk. Active ONLY when BOTH gates pass:
+#   1. custom kernel whose prebuilt directory name mentions ksu
+#      (case-insensitive), e.g. device/google/pixel-kernels/shiba_wksu23;
+#   2. make.sh flag -M/--manager (env WITH_SUKISU_MANAGER=true).
+# Stock kernels or builds without -M get nothing: no files, no service.
 #
 # What lands in the build (only in the ksu case):
 #   /system/etc/sukisu/<manager>.apk   — INERT copy, NOT a system app
@@ -20,7 +20,14 @@
 # (device-*.mk) before zuma/common.mk includes this file.
 _SUKISU_KERNEL_LC := $(shell echo "$(TARGET_KERNEL_DIR)" | tr 'A-Z' 'a-z')
 
-ifneq ($(findstring ksu,$(_SUKISU_KERNEL_LC)),)
+# Gate 1 (build-time): ksu in the kernel dir name.
+# Gate 2 (explicit opt-in): make.sh -M/--manager exports WITH_SUKISU_MANAGER=true.
+_SUKISU_WANT := false
+ifeq ($(WITH_SUKISU_MANAGER),true)
+_SUKISU_WANT := $(if $(findstring ksu,$(_SUKISU_KERNEL_LC)),true,false)
+endif
+
+ifeq ($(_SUKISU_WANT),true)
 # NOTE: no $(info)/$(warning) here — release-config parser chokes on them
 # during 'pre product config' phase.
 
